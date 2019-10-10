@@ -5,7 +5,7 @@ var fs = require('fs');
 var server = net.createServer(function(socket){
     socket.setEncoding();//设置data的形式
     socket.on('data',function(data){
-        //console.log(data);
+        console.log(data);
         //处理data获取路径
         var url = (""+data).split('/')[1].split(' ')[0];
         //主页
@@ -17,10 +17,12 @@ var server = net.createServer(function(socket){
             socket.end();
         //管理后台页面
         }else if(url=='admin'){
-            var cookieArr = (""+data).split('=');
-            var cookieV = cookieArr[cookieArr.length-1].split('\r\n\r\n')[0];
-            var cookieKArr = cookieArr[cookieArr.length-2].split(' ');
-            var cookieK = cookieKArr[cookieKArr.length-1];
+            if(/.*Cookie:.*/.test(''+data)){
+                var cookieV = (''+data).split('Cookie:')[1].split('SESSID=')[1].split(';')[0].split('\r\n\r\n')[0];
+            }else{
+                var cookieV = 'sajdhfuewalhaadfirield//()ff';
+            }
+            
             //判断Cookie是否存在
             fs.exists('./'+cookieV+'.txt',function(exists){
                 //Cookie存在
