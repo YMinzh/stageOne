@@ -3,39 +3,43 @@ var fs = require('fs');
 
 
 var server = net.createServer(function(socket){
-    socket.setEncoding();
+    socket.setEncoding();//设置data的形式
     socket.on('data',function(data){
         //console.log(data);
+        //处理data获取路径
         var url = (""+data).split('/')[1].split(' ')[0];
+        //主页
         if(url==''){
             socket.write('HTTP/1.1 200 OK;\n');
             socket.write('Content-type: text/html;charset=utf-8\n\n');
         
             socket.write('<h1>welcome</h1><a href="http://localhost:8001/admin">进入管理后台</a>');
             socket.end();
+        //管理后台页面
         }else if(url=='admin'){
             var cookieArr = (""+data).split('=');
             var cookieV = cookieArr[cookieArr.length-1].split('\r\n\r\n')[0];
             var cookieKArr = cookieArr[cookieArr.length-2].split(' ');
             var cookieK = cookieKArr[cookieKArr.length-1];
+            //判断Cookie是否存在
             fs.exists('./'+cookieV+'.txt',function(exists){
-                
+                //Cookie存在
                 if(exists){
-                    
+                    //读取文件内容
                     fs.readFile('./'+cookieV+'.txt','utf-8',function(err,data){
                         if(err){
                             console.error(err);
                         }
                         else{
-                            console.log(data+'登录了');
+                            socket.write('HTTP/1.1 200 OK;\n');
+                            socket.write('Content-type: text/html;charset=utf-8\n\n');
+            
+        
+                            socket.write(data+'登录成功');
+                            socket.end();
                         }
                     });
-                    socket.write('HTTP/1.1 200 OK;\n');
-                    socket.write('Content-type: text/html;charset=utf-8\n\n');
-    
-
-                    socket.write('登录成功');
-                    socket.end();
+                //Cookie不存在则跳转至登录页面
                 }else{
                     socket.write('HTTP/1.1 302 Moved Temporarily;\n');
                     socket.write("Location: http://localhost:8001/login\n");
@@ -44,8 +48,9 @@ var server = net.createServer(function(socket){
                     socket.end();
                 }
             });
-
+        //登录页面
         }else if(url=='login'){
+            //登录页面
             if(/^GET.*/.test(""+data)){
                 socket.write('HTTP/1.1 200 OK;\n');
                 socket.write('Content-type: text/html;charset=utf-8\n\n');
@@ -57,10 +62,12 @@ var server = net.createServer(function(socket){
                 socket.write('</form>');
                 socket.end('\n');
                 socket.end();
+            //处理表单
             }else{
                 var strArr = (""+data).split('=');
                 var username = strArr[strArr.length-2].split('&')[0];
                 var password = strArr[strArr.length-1];
+                //密码正确
                 if(username=='admin'&&password=='123456'){
                     var newCookie = '';
                     for(var i = 0;i<15;i++){
@@ -79,6 +86,7 @@ var server = net.createServer(function(socket){
                     socket.write('Content-type: text/html;charset=utf-8\n\n');
                 
                     socket.end();
+                //密码错误
                 }else{
                     socket.write('HTTP/1.1 302 Moved Temporarily;\n');
                     socket.write("Location: http://localhost:8001/login\n");
