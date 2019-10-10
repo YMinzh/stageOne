@@ -5,7 +5,7 @@ var fs = require('fs');
 var server = net.createServer(function(socket){
     socket.setEncoding();//设置data的形式
     socket.on('data',function(data){
-        console.log(data);
+        //console.log(data);
         //处理data获取路径
         var url = (""+data).split('/')[1].split(' ')[0];
         //主页
@@ -18,11 +18,12 @@ var server = net.createServer(function(socket){
         //管理后台页面
         }else if(url=='admin'){
             if(/.*Cookie:.*/.test(''+data)){
-                var cookieV = (''+data).split('Cookie:')[1].split('SESSID=')[1].split(';')[0].split('\r\n\r\n')[0];
+                var cookieV = (''+data).split('Cookie:')[1].split('SESSID=')[1].split(';')[0].split('\r\n')[0];
             }else{
                 var cookieV = 'sajdhfuewalhaadfirield//()ff';
             }
-            
+            console.log((''+data).split('Cookie:')[1].split('SESSID=')[1]);
+            console.log(cookieV);
             //判断Cookie是否存在
             fs.exists('./'+cookieV+'.txt',function(exists){
                 //Cookie存在
@@ -102,6 +103,12 @@ var server = net.createServer(function(socket){
 
 
 
+        }else{
+            socket.write('HTTP/1.1 404 NotFound;\n');
+            socket.write('Content-type: text/html;charset=utf-8\n\n');
+
+            socket.write('<h1>404</h1><h4>Not Found</h4>');    
+            socket.end();
         }
 
     });
