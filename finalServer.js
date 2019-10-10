@@ -84,7 +84,7 @@ var server = net.createServer(function(socket){
 
                     socket.write('HTTP/1.1 302 Moved Temporarily;\n');
                     socket.write("Location: http://localhost:8001/admin\n");
-                    socket.write('Set-Cookie:SESSID='+newCookie+';\n')
+                    socket.write('Set-Cookie:SESSID='+newCookie+';Max-Age=3600; Version=1\n')
                     socket.write('Content-type: text/html;charset=utf-8\n\n');
                 
                     socket.end();
