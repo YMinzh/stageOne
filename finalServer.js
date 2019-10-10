@@ -22,8 +22,7 @@ var server = net.createServer(function(socket){
             }else{
                 var cookieV = 'sajdhfuewalhaadfirield//()ff';
             }
-            console.log((''+data).split('Cookie:')[1].split('SESSID=')[1]);
-            console.log(cookieV);
+
             //判断Cookie是否存在
             fs.exists('./'+cookieV+'.txt',function(exists){
                 //Cookie存在
