@@ -17,7 +17,7 @@ var server = net.createServer(function(socket){
             socket.end();
         //管理后台页面
         }else if(url=='admin'){
-            if(/.*Cookie:.*/.test(''+data)){
+            if(/.*Cookie:.*/.test(''+data)&&/.*SESSID=.*/.test(''+data)){
                 var cookieV = (''+data).split('Cookie:')[1].split('SESSID=')[1].split(';')[0].split('\r\n')[0];
             }else{
                 var cookieV = 'sajdhfuewalhaadfirield//()ff';
